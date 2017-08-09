@@ -17,10 +17,14 @@ before_install:
   - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
   - sudo apt-get update
   - sudo apt-get -y install docker-ce
-  - docker-compose -f docker-compose.yml up -d thredds 
 
 script:
-  - docker ps -a
+  # Bring the stack up
+  - docker-compose -f docker-compose.yml up -d thredds
+  # Verify that it's running
+  - test $(docker ps -q -f "status=running" | wc -l) -eq 1
+  # Verify that a curl requests gets a proper 200 response
+  - test $(curl --write-out %{http_code} --silent --output /dev/null 'http://localhost/thredds/catalog.html') -eq 200
 
 after_script:
   - docker-compose down thredds
