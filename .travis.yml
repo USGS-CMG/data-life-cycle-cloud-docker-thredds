@@ -23,8 +23,10 @@ script:
   - docker-compose -f docker-compose.yml up -d thredds
   # Verify that it's running
   - test $(docker ps -q -f "status=running" | wc -l) -eq 1
+  # Wait for Docker THREDDS to actually initialize. Should be a few seconds
+  - sleep 15
   # Verify that a curl requests gets a proper 200 response
-  - test $(curl --write-out %{http_code} --silent --output /dev/null 'http://localhost/thredds/catalog.html') -eq 200
+  - test $(curl --write-out %{http_code} --silent --output /dev/null 'http://localhost:8080/thredds/catalog.html') -eq 200
 
 after_script:
   - docker-compose down thredds
