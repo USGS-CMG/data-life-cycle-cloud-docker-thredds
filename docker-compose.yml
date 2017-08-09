@@ -30,8 +30,11 @@ services:
       - "80:8080"
       - "443:8443"
       - "8443:8443"
-    env_file:
-      - "./thredds/compose.env"
+    environment:
+      - TDS_CONTENT_ROOT_PATH=/usr/local/tomcat/content
+      - THREDDS_XMX_SIZE=4G
+      - THREDDS_XMS_SIZE=4G
+      - TDS_HOST=http://thredds/
     secrets:
       - source: thredds_tomcat_users
         target: /usr/local/tomcat/conf/tomcat-users.xml
